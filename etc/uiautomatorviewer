@@ -30,12 +30,12 @@ done
 oldwd=`pwd`
 progdir=`dirname "${prog}"`
 progname=`basename "${prog}"`
-cd "${progdir}"
+cd "${progdir}/.."
 progdir=`pwd`
-prog="${progdir}"/"${progname}"
+prog="${progdir}"/bin/"${progname}"
 cd "${oldwd}"
 
-jarfile=uiautomatorviewer.jar
+jarfile=`basename $APP_HOME/lib/uiautomatorviewer-all.jar`
 frameworkdir="$progdir"
 libdir="$progdir"
 if [ ! -r "$frameworkdir/$jarfile" ]
@@ -83,7 +83,7 @@ swtpath=""
 if [ -n "$ANDROID_SWT" ]; then
     swtpath="$ANDROID_SWT"
 else
-    vmarch=`${javaCmd} -jar "${frameworkdir}"/archquery.jar`
+    vmarch=`"${progdir}"/bin/archquery`
     if [ -n "$ANDROID_BUILD_TOP" ]; then
         osname=`uname -s | tr A-Z a-z`
         swtpath="${ANDROID_BUILD_TOP}/prebuilts/tools/${osname}-${vmarch}/swt"
@@ -101,4 +101,4 @@ else
     exit 1
 fi
 
-exec "${javaCmd}" $javaOpts -Djava.ext.dirs="$frameworkdir" -Dcom.android.uiautomator.bindir="$progdir" -jar "$jarpath" "$@"
+exec "${javaCmd}" $javaOpts -classpath "$frameworkdir" -Dcom.android.uiautomator.bindir="$progdir" -jar "$jarpath" "$@"
